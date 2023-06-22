@@ -5,7 +5,6 @@
  * @stack: Pointer to the stack.
  * @line_number: Line number where the mul function is called.
  */
-
 void rotr(stack_t **stack, unsigned int line_number)
 {
 	stack_t *tmp, *last;
@@ -38,12 +37,11 @@ void rotr(stack_t **stack, unsigned int line_number)
  * @stack: Pointer to the stack.
  * @line_number: Line number where the mul function is called.
  */
-
 void stack(stack_t **stack, unsigned int line_number)
 {
-        (void) stack;
-        (void) line_number;
-        command->stack = 1;
+	(void) stack;
+	(void) line_number;
+	command->stack = 1;
 }
 
 /**
@@ -51,26 +49,25 @@ void stack(stack_t **stack, unsigned int line_number)
  * @stack: Pointer to the stack.
  * @line_number: Line number where the sub function is called.
  */
-
 void sub(stack_t **stack, unsigned int line_number)
 {
-        stack_t *tmp1, *tmp2;
+	stack_t *tmp1, *tmp2;
 
-        (void) stack;
-        if (command->stack_length < 2)
-        {
-                dprintf(2, "L%d: can't sub, stack too short\n", line_number);
-                free_args();
-                exit(EXIT_FAILURE);
-        }
+	(void) stack;
+	if (command->stack_length < 2)
+	{
+		dprintf(2, "L%d: can't sub, stack too short\n", line_number);
+		free_args();
+		exit(EXIT_FAILURE);
+	}
 
-        tmp1 = command->head;
-        tmp2 = tmp1->next;
+	tmp1 = command->head;
+	tmp2 = tmp1->next;
 
-        tmp2->n = tmp2->n - tmp1->n;
-        delete_stack_node();
+	tmp2->n = tmp2->n - tmp1->n;
+	delete_stack_node();
 
-        command->stack_length -= 1;
+	command->stack_length -= 1;
 }
 
 /**
@@ -80,25 +77,25 @@ void sub(stack_t **stack, unsigned int line_number)
  */
 void swap(stack_t **stack, unsigned int line_number)
 {
-        stack_t *tmp1, *tmp2;
+	stack_t *tmp1, *tmp2;
 
-        (void) stack;
-        if (command->stack_length < 2)
-        {
-                dprintf(2, "L%d: can't swap, stack too short\n", line_number);
-                free_args();
-                exit(EXIT_FAILURE);
-        }
+	(void) stack;
+	if (command->stack_length < 2)
+	{
+		dprintf(2, "L%d: can't swap, stack too short\n", line_number);
+		free_args();
+		exit(EXIT_FAILURE);
+	}
 
-        tmp1 = command->head;
-        tmp2 = tmp1->next;
-        tmp1->next = tmp2->next;
-        if (tmp1->next)
-                tmp1->next->prev = tmp1;
-        tmp2->next = tmp1;
-        tmp1->prev = tmp2;
-        tmp2->prev = NULL;
-        command->head = tmp2;
+	tmp1 = command->head;
+	tmp2 = tmp1->next;
+	tmp1->next = tmp2->next;
+	if (tmp1->next)
+		tmp1->next->prev = tmp1;
+	tmp2->next = tmp1;
+	tmp1->prev = tmp2;
+	tmp2->prev = NULL;
+	command->head = tmp2;
 }
 
 
@@ -109,19 +106,19 @@ void swap(stack_t **stack, unsigned int line_number)
  */
 int is_number(char *str)
 {
-        int i = 0;
+	int i = 0;
 
-        while (str[i])
-        {
-                if (i == 0 && str[i] == '-' && str[i + 1])
-                {
-                        i++;
-                        continue;
-                }
-                if (str[i] < '0' || str[i] > '9')
-                        return (0);
-                i++;
-        }
+	while (str[i])
+	{
+		if (i == 0 && str[i] == '-' && str[i + 1])
+		{
+			i++;
+			continue;
+		}
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
+		i++;
+	}
 
-        return (1);
+	return (1);
 }

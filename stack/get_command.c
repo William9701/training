@@ -62,9 +62,9 @@ void get_command(void)
 void run_command(void)
 {
 	stack_t *stack = NULL;
-	
+
 	if (command->n_tokens == 0)
 		return;
-	
+
 	command->instruction->f(&stack, command->line_number);
 }

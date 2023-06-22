@@ -62,13 +62,13 @@ void pop(stack_t **stack, unsigned int line_number)
 void pstr(stack_t **stack, unsigned int line_number)
 {
 	stack_t *temp;
-	
+
 	(void) stack;
 	(void) line_number;
-	
+
 	temp = command->head;
 	while (temp != NULL)
-        {
+	{
 		if (temp->n <= 0 || temp->n > 127)
 			break;
 		printf("%c", temp->n);
@@ -97,16 +97,16 @@ void queue(stack_t **stack, unsigned int line_number)
 void rotl(stack_t **stack, unsigned int line_number)
 {
 	stack_t *temp1, *temp2;
-	
+
 	(void) stack;
 	(void) line_number;
 	if (command->stack_length < 2)
 		return;
-	
+
 	temp1 = command->head;
 	temp2 = temp1->next;
 	command->head = temp2;
-	
+
 	while (temp2)
 	{
 		if (temp2->next == NULL)

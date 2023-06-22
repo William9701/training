@@ -14,7 +14,7 @@ void close_stream(void)
 }
 
 /**
- * free_all_args - Frees all allocated memory for arguments.
+ * free_args - Frees all allocated memory for arguments.
  */
 void free_args(void)
 {
@@ -38,7 +38,7 @@ void free_head(void)
 /**
 * free_arguments - free memory allocated to arguments pointer
 */
-void free_arguments()
+void free_arguments(void)
 {
 	if (command == NULL)
 		return;
@@ -47,15 +47,15 @@ void free_arguments()
 		free(command->instruction);
 		command->instruction = NULL;
 	}
-	
+
 	free_head();
-	
+
 	if (command->line)
 	{
 		free(command->line);
 		command->line = NULL;
 	}
-	
+
 	free(command);
 }
 
@@ -69,11 +69,11 @@ void free_stack(stack_t *head)
 {
 	if (head == NULL)
 		return;
-	
+
 	if (head->next != NULL)
 	{
 		free_stack(head->next);
 	}
-	
+
 	free(head);
 }

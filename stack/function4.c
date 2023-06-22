@@ -49,24 +49,22 @@ void push(stack_t **stack, unsigned int line_number)
  */
 void add(stack_t **stack, unsigned int line_number)
 {
-        stack_t *tmp1, *tmp2;
+	stack_t *tmp1, *tmp2;
 
-        (void) stack;
-        if (command->stack_length < 2)
-        {
-                dprintf(2, "L%d: can't add, stack too short\n",
-                                line_number);
-                free_args();
-                exit(EXIT_FAILURE);
-        }
+	(void) stack;
+	if (command->stack_length < 2)
+	{
+		dprintf(2, "L%d: can't add, stack too short\n", line_number);
+		free_args();
+		exit(EXIT_FAILURE);
+	}
+	tmp1 = command->head;
+	tmp2 = tmp1->next;
 
-        tmp1 = command->head;
-        tmp2 = tmp1->next;
+	tmp2->n = tmp1->n + tmp2->n;
+	delete_stack_node();
 
-        tmp2->n = tmp1->n + tmp2->n;
-        delete_stack_node();
-
-        command->stack_length -= 1;
+	command->stack_length -= 1;
 }
 /**
 * is_comment - checks the tokens if it starts with #"
@@ -80,7 +78,7 @@ int is_comment(void)
 			command->tokens[0][0] == '#'
 			)
 		return (1);
-	
+
 	return (0);
 }
 
@@ -91,7 +89,7 @@ int is_comment(void)
 void delete_stack_node(void)
 {
 	stack_t *tmp;
-	
+
 	tmp = command->head;
 	command->head = tmp->next;
 	free(tmp);
@@ -106,7 +104,7 @@ void delete_stack_node(void)
 void _div(stack_t **stack, unsigned int line_number)
 {
 	stack_t *tmp1, *tmp2;
-	
+
 	(void) stack;
 	if (command->stack_length < 2)
 	{
@@ -114,19 +112,19 @@ void _div(stack_t **stack, unsigned int line_number)
 		free_args();
 		exit(EXIT_FAILURE);
 	}
-	
+
 	tmp1 = command->head;
 	tmp2 = tmp1->next;
-	
+
 	if (tmp1->n == 0)
 	{
 		dprintf(2, "L%d: division by zero\n", line_number);
 		free_args();
 		exit(EXIT_FAILURE);
 	}
-	
+
 	tmp2->n = tmp2->n / tmp1->n;
 	delete_stack_node();
-	
+
 	command->stack_length -= 1;
 }
