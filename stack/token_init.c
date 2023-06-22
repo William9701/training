@@ -41,16 +41,16 @@ void tokenize_line(void)
  * initialize_arguments - Initializes a pointer to
  * arg_s structure.
  */
-void initialize_arguments()
+void initialize_arguments(void)
 {
 	command = malloc(sizeof(arg_t));
 	if (command == NULL)
 		malloc_failed();
-	
+
 	command->instruction = malloc(sizeof(instruction_t));
 	if (command->instruction == NULL)
 		malloc_failed();
-	
+
 	command->stream = NULL;
 	command->head = NULL;
 	command->line = NULL;
