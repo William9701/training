@@ -66,67 +66,26 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** no instance found **")
 
-    def do_destroy(self, line):
-        " Deletes an instance based on the class name and id"
-        data = models.storage.all()
-        if not line:
-            print('** class name missing **')
-        else:
-            try:
-                args = line.split()
-                arg1, arg2 = args
-            except ValueError:
-                print('** instance id missing **')
-                return
-            if arg1 in HBNBCommand.__valid_classes:
-                key = f"{arg1}.{arg2}"
-                if key in data.keys():
-                    data.pop(key, None)
-                    models.storage.save()
-                    models.storage.reload()
-                else:
-                    print('** no instance found **')
-            else:
-                print("** class doesn't exist **")
-
-    def default(self, item):
+    def do_destroy(self, args):
+        '''Delete an instance
+           Usage: destroy <class name> <id>
+        '''
+        args = args.split()
         objects = models.storage.all()
-        new_list =[]
 
-        keys = re.split(r'\.|\(\)|\(|\)|,', item)
-        if keys[0] in self.__valid_classes and keys[1] == "all":
-            for obj in objects.values():
-                if obj.__class__.__name__ == keys[0]:
-                    new_list.append(obj.__str__())
-            formatted_output = ", ".join(new_list)
-            print("[" + formatted_output + "]")
-        elif keys[0] in self.__valid_classes and keys[1] == "count":
-            class_name = keys[0]
-            count = sum(1 for obj in objects.values() if obj.__class__.__name__ == class_name)
-            print(count)
-        elif keys[0] in self.__valid_classes and keys[1] == "show":
-            s_id = keys[2].lstrip('"').rstrip('"')
-            key_value = f'{keys[0]}.{s_id}'
-            if key_value in objects:
-                print(objects[key_value])
-            else:
-                print('** no instance found **')
-        elif keys[0] in self.__valid_classes and keys[1] == "destroy":
-            s_id = keys[2].lstrip('"').rstrip('"')
-            key_value = f'{keys[0]}.{s_id}'
-            if key_value in objects:
-                objects.pop(key_value, None)
+        if len(args) == 0:
+            print('** class name missing **')
+        elif args[0] not in HBNBCommand.__valid_classes:
+            print("** class doesn't exist **")
+        elif len(args) == 1:
+            print('** instance id missing **')
+        else:
+            key_find = args[0] + '.' + args[1]
+            if key_find in objects.keys():
+                objects.pop(key_find, None)
                 models.storage.save()
-                models.storage.reload()
             else:
                 print('** no instance found **')
-        elif keys[0] in self.__valid_classes and keys[1] == "update":
-            s_id = keys[2].lstrip('"').rstrip('"')
-            key_value = f'{keys[0]}.{s_id}'
-            # Extract every word without double parentheses
-            filtered_words = keys[3].strip('.()"')
-
-            print(filtered_words)
 
     def do_all(self, args):
         '''Print a string representation of all instances
@@ -187,8 +146,77 @@ class HBNBCommand(cmd.Cmd):
             models.storage.save()
             models.storage.reload()
 
+    def default(self, item):
+        objects = models.storage.all()
+        new_list = []
 
-
+        keys = re.split(r'\.|\(\)|\(|\)|, ', item)
+        if keys[0] not in self.__valid_classes:
+            print("** class doesn't exist **")
+            return
+        if keys[0] in self.__valid_classes and keys[1] == "all":
+            for obj in objects.values():
+                if obj.__class__.__name__ == keys[0]:
+                    new_list.append(obj.__str__())
+            formatted_output = ", ".join(new_list)
+            print("[" + formatted_output + "]")
+        elif keys[0] in self.__valid_classes and keys[1] == "count":
+            class_name = keys[0]
+            count = sum(1 for obj in objects.values() if obj.__class__.__name__ == class_name)
+            print(count)
+        elif keys[0] in self.__valid_classes and keys[1] == "show":
+            s_id = keys[2].lstrip('"').rstrip('"')
+            key_value = f'{keys[0]}.{s_id}'
+            if key_value in objects:
+                print(objects[key_value])
+            else:
+                print('** no instance found **')
+        elif keys[0] in self.__valid_classes and keys[1] == "destroy":
+            s_id = keys[2].lstrip('"').rstrip('"')
+            key_value = f'{keys[0]}.{s_id}'
+            if key_value in objects:
+                objects.pop(key_value, None)
+                models.storage.save()
+                models.storage.reload()
+            else:
+                print('** no instance found **')
+        elif keys[0] in self.__valid_classes and keys[1] == "update":
+            f_w = [word.strip('"()"') for word in keys]
+            valid = "{" in item
+            if not valid:
+                key_value = f'{keys[0]}.{f_w[2]}'
+                attr_name = f_w[3]
+                attr_value = f_w[4]
+                obj = objects.get(key_value, None)
+                if obj == None:
+                    print("** no instance found **")
+                    return
+                if attr_name in obj.__class__.__dict__.keys():
+                    valtype = type(obj.__class__.__dict__[attr_name])
+                    obj.__dict__[attr_name] = valtype(attr_value)
+                else:
+                    obj.__dict__[attr_name] = attr_value
+                models.storage.save()
+                models.storage.reload()
+            else:
+                key_value = f'{keys[0]}.{f_w[2]}'
+                obj = objects.get(key_value, None)
+                if obj == None:
+                    print("** no instance found **")
+                    return
+                open_bracket = item.find("{")
+                close_bracket = item.rfind("}")
+                dic = item[open_bracket:close_bracket + 1]
+                vdic = eval(dic)
+                for k, v in vdic.items():
+                    if (k in obj.__class__.__dict__.keys() and
+                            type(obj.__class__.__dict__[k]) in {str, int, float}):
+                        valtype = type(obj.__class__.__dict__[k])
+                        obj.__dict__[k] = valtype(v)
+                    else:
+                        obj.__dict__[k] = v
+                models.storage.save()
+                models.storage.reload()
 
 
 if __name__ == '__main__':
